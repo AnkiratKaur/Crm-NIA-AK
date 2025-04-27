@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CrmTechTitans</title>
+
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cards.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    @await RenderSectionAsync("Styles", required: false)
+
+    <style>
+        :root {
+            /* Color Palette */
+            --off-white: #FFFBF2;
+            --light-gray: #DFE2DB;
+            --dark-gray: #555555;
+            --black: #010A10;
+            --red: #731F25;
+            
+            /* Component colors */
+            --primary: var(--dark-gray);
+            --primary-hover: var(--black);
+            --light-bg: var(--off-white);
+            --card-bg: var(--light-gray);
+            --text: var(--dark-gray);
+            --accent: var(--red);
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', 'Roboto', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-left: 230px;
+            min-height: 100vh;
+        }
+
+        /* === Main Content Adjustments === */
+        .content-container {
+            padding: 2rem;
+            padding-bottom: 5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 130vh;
+            background-color: var(--light-bg);
+        }
+
+        .content-container main {
+            flex: 1;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav-toggle:hover {
+            background: var(--primary-hover);
+        }
+
+        .mobile-nav-toggle i {
+            font-size: 1.25rem;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            backdrop-filter: blur(2px);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--light-bg);
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text);
+            border-top: 1px solid rgba(33, 29, 33, 0.08);
+            margin-top: auto;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+
+        /* === Responsive Styling === */
+        @@media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1050;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .mobile-nav-overlay {
+                display: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .mobile-nav-overlay.active {
+                display: block;
+                opacity: 1;
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            footer {
+                margin-left: 0;
+                width: 100%;
+            }
+            /* Table responsiveness */
+            .table.custom-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                table-layout: auto; /* Revert to auto layout for small screens */
+                width: 100%;
+            }
+
+            .table.custom-table th.actions-column,
+            .table.custom-table td.actions-column {
+                width: 230px; /* Slightly smaller on mobile but still large enough for 3 buttons */
+                min-width: 230px;
+            }
+            /* Button adjustments */
+            .text-center .btn-sm {
+                padding: 5px 8px;
+                margin: 0 1px;
+                font-size: 0.8rem;
+                min-width: auto;
+            }
+        }
+
+        details.nav-section {
+            padding: 0;
+            margin-bottom: 0.5rem;
+            border: none;
+        }
+
+        details summary.nav-section-title {
+            color: rgba(33, 29, 33, 0.6);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details[open] summary .toggle-icon {
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: rgba(33, 29, 33, 0.6);
+        }
+    </style>
+
+</head>
+<body>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Mobile Navigation Toggle Button - Only visible when authenticated -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Mobile Navigation Overlay - Only visible when authenticated -->
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+    }
+
+    <div class="main-container">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- Sidebar - Only visible when authenticated -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">
+                        <img src="~/images/niagara-logo.png" alt="Niagara Industrial Association" class="logo-img" />
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                       asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Member" ? "active" : "")"
+                       asp-area="" asp-controller="Member" asp-action="Index">
+                        <i class="fas fa-users"></i> Members
+                    </a>
+                </div>
+
+                <details class="nav-section">
+                    <summary class="nav-section-title">
+                        Contacts <i class="fas fa-chevron-down toggle-icon"></i>
+                    </summary>
+                    <div class="nav-links">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Contact" ? "active" : "")"
+                           asp-area="" asp-controller="Contact" asp-action="Index">
+                            <i class="fas fa-address-book"></i> Contacts
+                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Address" ? "active" : "")"
+                           asp-area="" asp-controller="Address" asp-action="Index">
+                            <i class="fas fa-map-marker-alt"></i> Municipalities
+                        </a>
+                    </div>
+                </details>
+
+                <details class="nav-section">
+                    <summary class="nav-section-title">
+                        Business <i class="fas fa-chevron-down toggle-icon"></i>
+                    </summary>
+                    <div class="nav-links">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Opportunity" ? "active" : "")"
+                           asp-area="" asp-controller="Opportunity" asp-action="Index">
+                            <i class="fas fa-briefcase"></i> Opportunities
+                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Interaction" ? "active" : "")"
+                           asp-area="" asp-controller="Interaction" asp-action="Index">
+                            <i class="fas fa-comments"></i> Interactions
+                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Industry" ? "active" : "")"
+                           asp-area="" asp-controller="Industry" asp-action="Index">
+                            <i class="fas fa-industry"></i> Industries
+                        </a>
+                    </div>
+                </details>
+
+
+                @if (User.IsInRole("Administrator"))
+                {
+                    <div class="nav-section">
+                        <div class="nav-section-title">Administration</div>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserManagement" ? "active" : "")"
+                           asp-area="" asp-controller="UserManagement" asp-action="Index">
+                            <i class="fas fa-user-shield"></i> User Management
+                        </a>
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "UserManagement" && ViewContext.RouteData.Values["action"]?.ToString() == "PendingApprovals" ? "active" : "")"
+                           asp-area="" asp-controller="UserManagement" asp-action="PendingApprovals">
+                            <i class="fas fa-user-clock"></i> Pending Approvals
+                        </a>
+                    </div>
+                }
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Profile</div>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")"
+                       asp-area="" asp-controller="Profile" asp-action="Index">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </a>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="email-name">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span>@User.Identity?.Name</span>
+                    </div>
+                    <div class="mt-2">
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="btn btn-sm btn-outline-dark w-100">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="content-wrapper" style="@(User.Identity.IsAuthenticated ? "" : "margin-left: 0;")">
+            <!-- Main Content -->
+            <div class="content-container">
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Load Chart.js first -->
+    <script src="https://cdn.jsdelivr.net/npm/date-fns"></script> <!-- Required by the adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script> <!-- Then the date adapter -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Navigation Script - Only include when authenticated -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const sidebar = document.getElementById('sidebar');
+                const mobileNavToggle = document.getElementById('mobileNavToggle');
+                const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+                const mobileLinks = document.querySelectorAll('.sidebar a');
+
+                // Function to check if we're on mobile
+                function isMobile() {
+                    return window.innerWidth <= 768;
+                }
+
+                // Toggle mobile navigation
+                mobileNavToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('mobile-open');
+                    mobileNavOverlay.classList.toggle('active');
+
+                    // Change icon based on state
+                    const icon = this.querySelector('i');
+                    if (sidebar.classList.contains('mobile-open')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+
+                // Close mobile navigation when clicking the overlay
+                mobileNavOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('mobile-open');
+                    mobileNavOverlay.classList.remove('active');
+
+                    // Reset icon
+                    const icon = mobileNavToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                });
+
+                // Close mobile navigation when clicking a link (on mobile only)
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (isMobile()) {
+                            sidebar.classList.remove('mobile-open');
+                            mobileNavOverlay.classList.remove('active');
+
+                            // Reset icon
+                            const icon = mobileNavToggle.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (!isMobile()) {
+                        // If desktop, ensure sidebar is visible
+                        sidebar.classList.remove('mobile-open');
+                        mobileNavOverlay.classList.remove('active');
+
+                        // Reset icon
+                        const icon = mobileNavToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            });
+        </script>
+    }
+
+    <!-- Table sorting script -->
+    <script src="~/js/table-sorting.js" asp-append-version="true"></script>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+@model CrmTechTitans.Models.ViewModels.EditUserViewModel
+@using CrmTechTitans.Models.Enumerations
+
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" class="text-decoration-none">Users</a>
+                    </li>
+                    @if (Context.Request.Query["fromDetails"] == "true")
+                    {
+                        <li class="breadcrumb-item">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none">Details</a>
+                        </li>
+                    }
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="h3 mb-2">Edit User</h1>
+                
+            </div>
+
+            <!-- User Edit Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <!-- Password Note -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Users can change their passwords through their own profile page. Administrators cannot change passwords for security reasons.
+                    </div>
+                    
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="row g-3 mb-4">
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="form-label">Email</label>
+                                    <input asp-for="Email" class="form-control" placeholder="Enter Email" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="UserName" class="form-label">Username</label>
+                                    <input asp-for="UserName" class="form-control" placeholder="Enter Username" />
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="SelectedRole" class="form-label">Role</label>
+                                    <select asp-for="SelectedRole" class="form-select">
+                                        <option value="">Select Role</option>
+                                        @foreach (var role in Model.AvailableRoles)
+                                        {
+                                            <option value="@role">@role</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="SelectedRole" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Approval Status -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ApprovalStatus" class="form-label">Approval Status</label>
+                                    <select asp-for="ApprovalStatus" asp-items="Html.GetEnumSelectList<UserApprovalStatus>()" class="form-select">
+                                    </select>
+                                    <span asp-validation-for="ApprovalStatus" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Rejection Reason -->
+                            <div class="col-12 rejection-reason-container" style="display: @(Model.ApprovalStatus == UserApprovalStatus.Rejected ? "block" : "none")">
+                                <div class="form-group mb-3">
+                                    <label asp-for="RejectionReason" class="form-label">Rejection Reason</label>
+                                    <textarea asp-for="RejectionReason" class="form-control" rows="3" placeholder="Provide a reason for rejection"></textarea>
+                                    <span asp-validation-for="RejectionReason" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">Back to Users</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script>
+        $(document).ready(function() {
+            // Show/hide rejection reason based on status
+            $("#ApprovalStatus").on("change", function() {
+                if ($(this).val() === "@((int)UserApprovalStatus.Rejected)") {
+                    $(".rejection-reason-container").show();
+                } else {
+                    $(".rejection-reason-container").hide();
+                }
+            });
+        });
+    </script>
+} 

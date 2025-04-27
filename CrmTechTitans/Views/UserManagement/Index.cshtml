@@ -1,0 +1,86 @@
+@model List<CrmTechTitans.Models.ViewModels.UserViewModel>
+@using CrmTechTitans.Models.Enumerations
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid">
+   
+            <!-- Page Header -->
+            <header class="page-header d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">User Management</h1>
+                    
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="PendingApprovals" class="btn btn-primary me-2">
+                        <i class="fas fa-user-clock me-2"></i> Pending Approvals
+                    </a>
+                    <a asp-action="Create" class="btn btn-dark me-2">
+                        <i class="fas fa-plus-circle me-2"></i> Create New User
+                    </a>
+                    <a asp-action="CreateTestAccount" class="btn btn-warning">
+                        <i class="fas fa-user-shield me-2"></i> Create Test Account
+                    </a>
+                </div>
+            </header>
+
+            <!-- User List Card -->
+    <section class="table-responsive">
+        <table class="table custom-table">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="border-0 ps-4">Username</th>
+                                    <th class="border-0">Email</th>
+                                    <th class="border-0">Roles</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0 text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4">@user.UserName</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (user.Roles.Any())
+                                            {
+                                                foreach (var role in user.Roles)
+                                                {
+                                                    <span class="badge bg-primary me-1">@role</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No roles assigned</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @switch (user.ApprovalStatus)
+                                            {
+                                                case UserApprovalStatus.Approved:
+                                                    <span class="badge bg-success">Approved</span>
+                                                    break;
+                                                case UserApprovalStatus.Pending:
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                    break;
+                                                case UserApprovalStatus.Rejected:
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary me-1">
+                                                 Edit
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-outline-danger">
+                                                 Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                 </section>

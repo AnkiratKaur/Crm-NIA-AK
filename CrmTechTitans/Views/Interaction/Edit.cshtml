@@ -1,0 +1,114 @@
+﻿@model CrmTechTitans.Models.Interaction
+
+@{
+    ViewData["Title"] = "Edit Interaction";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" class="text-decoration-none">Interaction</a>
+                    </li>
+
+                    @if (Context.Request.Query["fromDetails"] == "true")
+                    {
+                        <li class="breadcrumb-item">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none">Details</a>
+                        </li>
+                    }
+
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="h3 mb-2">Edit Interaction</h1>
+                
+            </div>
+
+            <!-- Interaction Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" id="multiStepForm" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Interaction Details Section -->
+                        <div class="row g-3 mb-4">
+                            <!-- Interaction Details -->
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="InteractionDetails" class="form-label">Interaction</label>
+                                    <textarea asp-for="InteractionDetails" class="form-control" rows="4" placeholder="Enter interaction details"></textarea>
+                                    <span asp-validation-for="InteractionDetails" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Interaction Date -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Date" class="form-label">Interaction Date</label>
+                                    <input asp-for="Date" class="form-control" type="datetime-local" />
+                                    <span asp-validation-for="Date" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Contacted Person -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ContactId" class="form-label">Contacted Person</label>
+                                    <input type="text" id="contactFilter" class="form-control mb-2" placeholder="Type to filter contacts..." onkeyup="filterContacts()">
+                                    <select asp-for="ContactId" class="form-select" id="contactSelect">
+                                        <option value="">Select a person</option>
+                                        @foreach (var contact in ViewBag.Contacts as List<CrmTechTitans.Models.Contact>)
+                                        {
+                                            <option value="@contact.ID">@contact.FullFormalName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ContactId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                Back to Interactions
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function filterContacts() {
+            var input, filter, select, options, i;
+            input = document.getElementById("contactFilter");
+            filter = input.value.toLowerCase();
+            select = document.getElementById("contactSelect");
+            options = select.getElementsByTagName("option");
+
+            for (i = 0; i < options.length; i++) {
+                var txtValue = options[i].textContent || options[i].innerText;
+                if (txtValue.toLowerCase().includes(filter)) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+}

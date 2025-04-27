@@ -1,0 +1,862 @@
+﻿@model CrmTechTitans.ViewModels.DashboardVM
+
+@section Styles {
+    <!-- Custom dashboard styles -->
+    <style>
+        :root {
+            /* Modern color palette */
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --secondary: #334155;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            /* Neutral colors */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* Border radius */
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 1.5rem 0;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--primary);
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .company-logo {
+            height: 3rem;
+            width: auto;
+        }
+
+        .dashboard-title h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            letter-spacing: -0.025em;
+        }
+
+        .btn {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-secondary {
+            color: var(--gray-700);
+            border-color: var(--gray-300);
+            background-color: white;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: var(--gray-100);
+                border-color: var(--gray-400);
+                color: var(--gray-800);
+            }
+
+        .dropdown-menu {
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+            .dropdown-item:hover {
+                background-color: var(--gray-100);
+                color: var(--primary);
+            }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Navigation Cards */
+        .nav-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--gray-800);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background-color: var(--primary-light);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .nav-card:hover {
+                transform: translateY(-0.25rem);
+                box-shadow: var(--shadow-lg);
+                color: var(--gray-800);
+                border-color: var(--gray-300);
+            }
+
+                .nav-card:hover::before {
+                    opacity: 1;
+                }
+
+        .nav-icon {
+            background-color: var(--primary-light);
+            color: white;
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-card:hover .nav-icon {
+            background-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.15);
+        }
+
+        .nav-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+        }
+
+        .nav-card p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+            .metric-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-2px);
+            }
+
+        .metric-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .metric-icon::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            }
+
+        .metric-info {
+            flex-grow: 1;
+        }
+
+            .metric-info h3 {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--gray-500);
+                margin: 0 0 0.5rem 0;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .metric-info span {
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--gray-800);
+                display: block;
+                line-height: 1.2;
+            }
+
+        .accent-blue .metric-icon {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        }
+
+        .accent-green .metric-icon {
+            background: linear-gradient(135deg, #34d399 0%, var(--success) 100%);
+        }
+
+        .accent-yellow .metric-icon {
+            background: linear-gradient(135deg, #fbbf24 0%, var(--warning) 100%);
+        }
+
+        .accent-red .metric-icon {
+            background: linear-gradient(135deg, #f87171 0%, var(--danger) 100%);
+        }
+
+        /* Chart Containers */
+        .chart-container {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+            .chart-container:hover {
+                box-shadow: var(--shadow-md);
+            }
+
+            .chart-container h3 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--gray-800);
+                margin: 0 0 1rem 0;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+        .chart-canvas {
+            width: 100%;
+            height: 200px !important;
+            max-height: 200px !important;
+        }
+    </style>
+}
+
+@{
+    ViewData["Title"] = "Dashboard Overview";
+}
+
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-title">
+            <h1>Member Management Dashboard</h1>
+        </div>
+        <div class="d-flex align-items-center">
+        </div>
+    </div>
+</div>
+
+<!-- Navigation Cards -->
+<div class="row g-4 mb-4">
+    <!-- Link to Members -->
+    <div class="col-md-6 col-lg-3">
+        <a href="/Member/Index" class="nav-card">
+            <div class="nav-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>Members</h3>
+            <p>View and manage all members in the system</p>
+        </a>
+    </div>
+
+    <!-- Link to Municipalities -->
+    <div class="col-md-6 col-lg-3">
+        <a href="/Address/Index" class="nav-card">
+            <div class="nav-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h3>Municipalities</h3>
+            <p>View and filter members by municipalities</p>
+        </a>
+    </div>
+
+    <!-- Link to Opportunities -->
+    <div class="col-md-6 col-lg-3">
+        <a href="/Opportunity/Index" class="nav-card">
+            <div class="nav-icon">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <h3>Opportunities</h3>
+            <p>Manage and track business opportunities</p>
+        </a>
+    </div>
+
+    <!-- Link to Reports - UPDATED to link to Member/Index -->
+    <div class="col-md-6 col-lg-3">
+        <a href="/Member/Index" class="nav-card" id="reportsCard">
+            <div class="nav-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Reports</h3>
+            <p>Generate and view detailed reports</p>
+        </a>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<!-- Metrics Cards -->
+<div class="d-flex flex-wrap gap-4 mb-4 justify-content-start">
+    <!-- Total Members Card -->
+    <div style="flex: 1 1 calc(33.333% - 1rem); min-width: 250px;">
+        <div class="metric-card accent-blue">
+            <div class="metric-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-info">
+                <h3>Total Members</h3>
+                <span data-member-count="total">@(Model.MemberCountSummary?.TotalMembers ?? 0)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- GoodStanding Members Card -->
+    <div style="flex: 1 1 calc(33.333% - 1rem); min-width: 250px;">
+        <div class="metric-card accent-green">
+            <div class="metric-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="metric-info">
+                <h3>Good Standing</h3>
+                <span data-member-count="goodStanding">@(Model.MemberCountSummary?.GoodStanding ?? 0)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Outstanding Members Card -->
+    <div style="flex: 1 1 calc(33.333% - 1rem); min-width: 250px;">
+        <div class="metric-card accent-yellow">
+            <div class="metric-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="metric-info">
+                <h3>Outstanding</h3>
+                <span data-member-count="outstanding">@(Model.MemberCountSummary?.OutStanding ?? 0)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Main Dashboard Charts -->
+<div class="row g-4">
+    <!-- Member Growth Chart -->
+    <div class="col-md-12 col-lg-4">
+        <div class="chart-container">
+            <h3>Member Growth</h3>
+            <canvas id="memberGrowthChart" class="chart-canvas"></canvas>
+        </div>
+    </div>
+
+    <!-- Municipality Distribution Chart -->
+    <div class="col-md-12 col-lg-4">
+        <div class="chart-container">
+            <h6 class="m-0 font-weight-bold text-primary">Members by Municipality</h6>
+            <canvas id="municipalityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Industry Status Chart -->
+    <div class="col-md-12 col-lg-4">
+        <div class="chart-container">
+            <h6 class="m-0 font-weight-bold text-primary">Members by Industry</h6>
+            <canvas id="industryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>
+
+<!-- Pass data to JavaScript -->
+<script>
+    // Set a flag in localStorage when the Reports card is clicked
+    document.getElementById('reportsCard').addEventListener('click', function() {
+        localStorage.setItem('openExcelExport', 'true');
+    });
+
+    // Pass the data from the model to JavaScript
+    @if (Model.MemberCountOverTime != null && Model.MemberCountOverTime.Any())
+    {
+        <text>
+                window.memberCountOverTime = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.MemberCountOverTime.Select(m => new
+            {
+                Date = m.Date.ToString("yyyy-MM-dd"),
+                m.Count
+            }).ToList()
+        ));
+        </text>
+    }
+    else
+    {
+        <text>
+                window.memberCountOverTime = [];
+        </text>
+    }
+
+    // Pass all membership types to JavaScript
+    @if (Model.MembershipTypeSummary?.AllMembershipTypes != null && Model.MembershipTypeSummary.AllMembershipTypes.Any())
+    {
+        <text>
+                window.allMembershipTypes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MembershipTypeSummary.AllMembershipTypes));
+        </text>
+    }
+    else
+    {
+        <text>
+                window.allMembershipTypes = {};
+        </text>
+    }
+
+    window.membershipTypeSummary = {
+        associateCount: @(Model.MembershipTypeSummary?.AssociateCount ?? 0),
+        chamberAssociateCount: @(Model.MembershipTypeSummary?.ChamberAssociateCount ?? 0),
+        nonLocalIndustrialCount: @(Model.MembershipTypeSummary?.NonLocalIndustrialCount ?? 0),
+        governmentAssociationCount: @(Model.MembershipTypeSummary?.GovernmentAssociationCount ?? 0),
+        localCount: @(Model.MembershipTypeSummary?.LocalCount ?? 0),
+        otherCount: @(Model.MembershipTypeSummary?.OtherCount ?? 0)
+    };
+
+    window.opportunityCountSummary = {
+        qualificationCount: @(Model.OpportunityCountSummary?.QualificationCount ?? 0),
+        negotiationCount: @(Model.OpportunityCountSummary?.NegotiationCount ?? 0),
+        closedNewMembersCount: @(Model.OpportunityCountSummary?.ClosedNewMembersCount ?? 0),
+        closedNotInterestedCount: @(Model.OpportunityCountSummary?.ClosedNotInterestedCount ?? 0)
+    };
+
+    window.memberCounts = {
+        total: @(Model.MemberCountSummary?.TotalMembers ?? 0),
+        goodStanding: @(Model.MemberCountSummary?.GoodStanding ?? 0),
+        outstanding: @(Model.MemberCountSummary?.OutStanding ?? 0),
+        cancelled: @(Model.MemberCountSummary?.Cancelled ?? 0)
+    };
+
+    console.log("Dashboard data loaded:", {
+        memberCountOverTime: window.memberCountOverTime,
+        allMembershipTypes: window.allMembershipTypes,
+        membershipTypeSummary: window.membershipTypeSummary,
+        opportunityCountSummary: window.opportunityCountSummary,
+        memberCounts: window.memberCounts
+    });
+
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update the member count cards with real data
+        document.querySelectorAll('[data-member-count]').forEach(element => {
+            const type = element.getAttribute('data-member-count');
+            if (window.memberCounts && window.memberCounts[type] !== undefined) {
+                element.textContent = window.memberCounts[type];
+            }
+        });
+
+        // Initialize Bootstrap tabs
+        var triggerTabList = [].slice.call(document.querySelectorAll('#dashboardTabs button'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+
+        // Initialize Member Growth Chart
+        if (window.memberCountOverTime && window.memberCountOverTime.length > 0) {
+            console.log("Member data available:", window.memberCountOverTime);
+
+            // Format the data for Chart.js
+            const memberLabels = window.memberCountOverTime.map(item => item.Date);
+            const memberData = window.memberCountOverTime.map(item => item.Count);
+
+            // Member Growth Chart
+            const memberGrowthCtx = document.getElementById('memberGrowthChart')?.getContext('2d');
+            if (memberGrowthCtx) {
+                const memberGrowthChart = new Chart(memberGrowthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: memberLabels,
+                        datasets: [{
+                            label: 'Member Count',
+                            data: memberData,
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'month',
+                                    tooltipFormat: 'MMM yyyy',
+                                    displayFormats: {
+                                        month: 'MMM yyyy'
+                                    }
+                                },
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 11
+                                    },
+                                    precision: 0
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                                padding: 12,
+                                titleFont: {
+                                    size: 13,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 12
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Members: ${context.parsed.y}`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.warn("Canvas element 'memberGrowthChart' not found");
+            }
+        } else {
+            console.warn("No member data available for charts");
+        }
+
+        // Initialize industry  Chart
+        const industryDistributionCtx = document.getElementById('industryChart')?.getContext('2d');
+        if (industryDistributionCtx) {
+            const labels = [];
+            const data = [];
+            const backgroundColors = [
+                'rgba(59, 130, 246, 0.8)',   // Blue
+                'rgba(139, 92, 246, 0.8)',   // Purple
+                'rgba(16, 185, 129, 0.8)',   // Green
+                'rgba(245, 158, 11, 0.8)',   // Orange
+                'rgba(239, 68, 68, 0.8)',    // Red
+                'rgba(14, 165, 233, 0.8)',   // Sky Blue
+                'rgba(236, 72, 153, 0.8)',   // Pink
+                'rgba(168, 85, 247, 0.8)',   // Violet
+                'rgba(234, 179, 8, 0.8)',    // Yellow
+                'rgba(100, 116, 139, 0.8)'   // Slate
+            ];
+            const borderColors = [
+                'rgba(59, 130, 246, 1)',
+                'rgba(139, 92, 246, 1)',
+                'rgba(16, 185, 129, 1)',
+                'rgba(245, 158, 11, 1)',
+                'rgba(239, 68, 68, 1)',
+                'rgba(14, 165, 233, 1)',
+                'rgba(236, 72, 153, 1)',
+                'rgba(168, 85, 247, 1)',
+                'rgba(234, 179, 8, 1)',
+                'rgba(100, 116, 139, 1)'
+            ];
+
+            const bgColors = [];
+            const bdrColors = [];
+
+            const industryData = @Html.Raw(Json.Serialize(Model.MembersByIndustry ?? new Dictionary<string, int>()));
+
+            if (Object.keys(industryData).length > 0) {
+                let colorIndex = 0;
+                for (const [industry, count] of Object.entries(industryData)) {
+                    if (count > 0) {
+                        labels.push(industry);
+                        data.push(count);
+                        bgColors.push(backgroundColors[colorIndex % backgroundColors.length]);
+                        bdrColors.push(borderColors[colorIndex % borderColors.length]);
+                        colorIndex++;
+                    }
+                }
+            }
+
+            if (data.length === 0) {
+                labels.push('No Data');
+                data.push(1);
+                bgColors.push('rgba(203, 213, 225, 0.5)');
+                bdrColors.push('rgba(203, 213, 225, 1)');
+            }
+
+            const industryDistributionChart = new Chart(industryDistributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderColor: bdrColors,
+                        borderWidth: 1,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 15,
+                                boxWidth: 12,
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            padding: 12,
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            callbacks: {
+                                label: function (context) {
+                                    if (context.label === 'No Data') return 'No data available';
+
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            console.warn("Canvas element 'industryChart' not found");
+        }
+
+        // Initialize muncipality Status Chart
+        const municipalityCtx = document.getElementById('municipalityChart')?.getContext('2d');
+        if (municipalityCtx) {
+            const labels = [];
+            const data = [];
+            const bgColors = [];
+            const borderColors = [];
+
+            const municipalityData = @Html.Raw(Json.Serialize(Model.MembersByMunicipality ?? new Dictionary<string, int>()));
+
+            for (const [municipality, count] of Object.entries(municipalityData)) {
+                if (count > 0) {
+                    labels.push(municipality);
+                    data.push(count);
+
+                    // Apply repeating color theme (matching your palette)
+                    const colorSet = [
+                        { bg: 'rgba(23, 135, 109, 0.7)', border: 'rgba(23, 135, 109, 1)' },
+                        { bg: 'rgba(3, 34, 33, 0.7)', border: 'rgba(3, 34, 33, 1)' },
+                        { bg: 'rgba(170, 203, 202, 0.7)', border: 'rgba(170, 203, 202, 1)' }
+                    ];
+                    const color = colorSet[labels.length % colorSet.length];
+                    bgColors.push(color.bg);
+                    borderColors.push(color.border);
+                }
+            }
+
+            // If no data, show placeholder
+            if (data.length === 0) {
+                labels.push('No Data');
+                data.push(1);
+                bgColors.push('rgba(203, 213, 225, 0.5)');
+                borderColors.push('rgba(203, 213, 225, 1)');
+            }
+
+            const municipalityChart = new Chart(municipalityCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Members',
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            padding: 12,
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            callbacks: {
+                                label: function (context) {
+                                    if (context.label === 'No Data') return 'No data available';
+                                    return `Count: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            console.warn("Canvas element 'municipalityChart' not found");
+        }
+    });
+</script>
